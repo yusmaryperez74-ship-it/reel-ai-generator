@@ -1,0 +1,42 @@
+# ============================================================
+# Backend Dockerfile - FastAPI + FFmpeg
+# ============================================================
+
+FROM python:3.11-slim
+
+# Instalar FFmpeg y dependencias del sistema
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    libsm6 \
+    libxext6 \
+    libfontconfig1 \
+    libglib2.0-0 \
+    fonts-liberation \
+    && rm -rf /var/lib/apt/lists/*
+
+# Directorio de trabajo
+WORKDIR /app
+
+# Copiar e instalar dependencias Python primero (capa de cache)
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar código fuente del backend
+COPY backend/ .
+
+# Copiar assets (música de fondo, etc.)
+COPY assets/ ./assets/
+
+# Crear directorios necesarios
+RUN mkdir -p /tmp/reel_ai/audio /tmp/reel_ai/images /tmp/reel_ai/music /tmp/reel_ai/output
+
+# Variables de entorno por defecto
+ENV PYTHONPATH=/app
+ENV TEMP_DIR=/tmp/reel_ai
+ENV OUTPUT_DIR=/tmp/reel_ai/output
+
+# Puerto de la API
+EXPOSE 8000
+
+# Comando de inicio
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

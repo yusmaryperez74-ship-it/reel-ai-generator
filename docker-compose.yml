@@ -1,0 +1,62 @@
+version: '3.9'
+
+# ============================================================
+# REEL AI GENERATOR - Docker Compose
+# Levanta: Backend (FastAPI) + Frontend (React/Nginx) + Redis
+# ============================================================
+
+services:
+  # ----- Backend API -----
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: reel_backend
+    env_file: backend/.env        # Carga tus API keys desde .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - CORS_ORIGINS=http://localhost,http://frontend
+    volumes:
+      - reel_temp:/tmp/reel_ai    # Almacenamiento temporal de archivos generados
+    ports:
+      - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ----- Frontend -----
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    container_name: reel_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # ----- Redis (Cola de tareas) -----
+  redis:
+    image: redis:7-alpine
+    container_name: reel_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  reel_temp:      # Archivos de audio, imágenes y videos temporales
+  redis_data:     # Persistencia de Redis

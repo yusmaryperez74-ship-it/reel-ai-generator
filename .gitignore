@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+.venv/
+*.egg-info/
+
+# Node
+node_modules/
+dist/
+.cache/
+
+# Archivos generados
+/tmp/reel_ai/
+backend/assets/music/*.mp3
+
+# IDE
+.vscode/
+.idea/
+*.DS_Store
+
+# Docker
+.dockerignore

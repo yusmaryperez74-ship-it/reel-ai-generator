@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-dark-900 text-white font-sans antialiased;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(120, 40, 200, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(217, 70, 239, 0.06) 0%, transparent 50%);
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  /* Botón primario con gradiente animado */
+  .btn-primary {
+    @apply relative inline-flex items-center justify-center gap-2
+           px-8 py-4 rounded-2xl font-semibold text-white text-sm
+           overflow-hidden transition-all duration-300
+           hover:scale-[1.02] active:scale-[0.98]
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100;
+    background: linear-gradient(135deg, #d946ef, #7c3aed, #ec4899);
+    background-size: 200% 200%;
+    animation: gradient-shift 4s ease infinite;
+    box-shadow: 0 0 30px rgba(217, 70, 239, 0.4);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    box-shadow: 0 0 50px rgba(217, 70, 239, 0.6);
+  }
+
+  /* Tarjeta oscura con borde sutil */
+  .card-dark {
+    @apply bg-dark-800 rounded-3xl border border-white/5
+           backdrop-blur-sm;
+  }
+
+  /* Input estilizado */
+  .input-dark {
+    @apply w-full bg-dark-700 border border-white/10 rounded-2xl
+           px-5 py-4 text-white placeholder-white/30
+           focus:outline-none focus:border-brand-500/50
+           focus:ring-2 focus:ring-brand-500/20
+           transition-all duration-200;
+  }
+
+  /* Badge de progreso */
+  .progress-bar {
+    @apply h-2 rounded-full bg-gradient-to-r from-brand-500 to-purple-500
+           transition-all duration-500 ease-out;
+  }
+
+  /* Efecto de brillo en bordes */
+  .glow-border {
+    box-shadow:
+      0 0 0 1px rgba(217, 70, 239, 0.3),
+      0 0 20px rgba(217, 70, 239, 0.1),
+      inset 0 0 20px rgba(217, 70, 239, 0.05);
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-400 via-purple-400 to-pink-400
+           bg-clip-text text-transparent;
+  }
+
+  .bg-gradient-brand {
+    background: linear-gradient(135deg, #d946ef 0%, #7c3aed 50%, #ec4899 100%);
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Animación de gradiente para el botón */
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Animación de pulso suave para el loading */
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+.pulse-ring::before {
+  content: '';
+  @apply absolute inset-0 rounded-full bg-brand-500;
+  animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+/* Video preview con formato 9:16 */
+.video-preview {
+  aspect-ratio: 9 / 16;
+  @apply rounded-3xl overflow-hidden bg-dark-700;
+  max-height: 70vh;
+  width: auto;
+}
+
+/* Spinner de carga */
+.spinner {
+  border: 3px solid rgba(217, 70, 239, 0.2);
+  border-top-color: #d946ef;
+  @apply rounded-full animate-spin;
+}
